@@ -1,0 +1,79 @@
+@import "tailwindcss";
+/* Put tokens in the base layer so Tailwind utilities can still override them */
+@import "./tokens.css" layer(base);
+
+/* Where Tailwind looks for class names (paths are relative to this file) */
+@source "../pages";
+@source "../src";
+
+/* dark: variant follows <html data-theme="dark"> */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Semantic colors: they read the CSS variables from tokens.css,
+   so one class (bg-surface) works in light AND dark mode. */
+@theme inline {
+  --color-page: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-line: var(--border);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-on-brand: var(--text-on-brand);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-navy: var(--secondary);
+  --color-navy-soft: var(--secondary-soft);
+  --color-mint: var(--accent);
+  --color-mint-soft: var(--accent-soft);
+
+  --color-subject-geography: var(--subject-geography);
+  --color-subject-physics: var(--subject-physics);
+  --color-subject-chemistry: var(--subject-chemistry);
+  --color-subject-pe: var(--subject-pe);
+  --color-subject-math: var(--subject-math);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
+}
+
+/* ---- Motion ---- (tokens.css turns every animation off for visitors who choose "reduce motion") */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(var(--float-y, -16px)) rotate(var(--float-r, 0deg)); }
+}
+@keyframes pop-in { from { opacity: 0; scale: 0.8; } to { opacity: 1; scale: 1; } }
+@keyframes fade-up { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+@keyframes breathe { 0%, 100% { scale: 1; } 50% { scale: 1.035; } }
+
+/* Landing hero: items pop in, then keep floating. Tune with --float-y, --float-r, --float-dur, --pop-delay */
+.hero-float {
+  animation:
+    pop-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) var(--pop-delay, 0s) backwards,
+    float var(--float-dur, 4.5s) ease-in-out calc(var(--pop-delay, 0s) + 0.7s) infinite;
+}
+.hero-breathe { animation: breathe 7s ease-in-out infinite; }
+
+/* Fade-up on load (.page-in) and on scroll (.reveal-hidden, then .reveal-in) */
+.page-in { animation: fade-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.reveal-hidden { opacity: 0; }
+.reveal-in { animation: fade-up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+
+/* Buttons show a pointer (Tailwind v4 resets them to the default arrow) */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  [role="checkbox"] { cursor: pointer; }
+}
+
+/* Type scale from your tokens (text-xs = 10px ... text-4xl = 48px) */
+@theme {
+  --text-xs: 0.625rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.5rem;
+  --text-4xl: 3rem;
+}

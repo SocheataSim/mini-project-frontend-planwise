@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  },
+  "scripts": {
+    "css": "tailwindcss -i ./style/input.css -o ./style/output.css --watch",
+    "ts": "tsc --watch",
+    "dev": "concurrently \"npm:css\" \"npm:ts\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "typescript": "^7.0.2"
+  }
+}
