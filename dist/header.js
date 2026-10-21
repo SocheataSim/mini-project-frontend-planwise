@@ -2,7 +2,6 @@ import { signOut } from "./session.js";
 import { getData } from "./store.js";
 import { escapeHtml, formatWhen, isSameDay } from "./utils.js";
 const PANEL_CLASS = "absolute right-0 top-12 z-40 hidden w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-line bg-elevated p-3 shadow-[var(--shadow-md)]";
-/** Puts a header button inside a positioned wrapper so a panel can open under it. */
 function withPanel(button, id, html) {
     const wrapper = document.createElement("div");
     wrapper.className = "relative";

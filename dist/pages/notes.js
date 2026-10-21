@@ -282,7 +282,6 @@ export function renderNotes(container, id) {
     renderList();
     renderEditor();
     bindDialog();
-    // Using on... properties (not addEventListener) so re-opening the tab never stacks handlers
     container.onmousedown = (event) => {
         if (event.target instanceof Element && event.target.closest("[data-cmd]"))
             event.preventDefault(); // keep the text selection

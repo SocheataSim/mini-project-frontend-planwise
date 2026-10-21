@@ -9,14 +9,12 @@ const LEAF = svg('<path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14"/><path d="M5 19c
 const PRIMARY_BTN = "inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-on-brand transition hover:brightness-95 disabled:pointer-events-none disabled:opacity-40";
 const SECONDARY_BTN = "inline-flex items-center justify-center rounded-xl border border-line bg-elevated px-5 py-3 text-sm font-semibold transition-colors hover:bg-surface disabled:pointer-events-none disabled:opacity-40";
 const CARD = "rounded-3xl bg-elevated p-5 sm:p-6";
-/** Slightly larger version of a button class, used only on the timer card. */
 const BIG = (classes) => classes.replace("px-5 py-3 text-sm", "px-6 py-3 text-sm");
 const LINK = "text-sm font-semibold text-brand hover:underline";
 const BREAK_MINUTES = 5;
 const DEFAULT_FOCUS_MINUTES = 25;
 const RING_RADIUS = 44;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
-/* ---------- Timer state (lives in memory while the page is open) ---------- */
 let mode = "focus";
 let status = "idle";
 let selectedPlanId = null;
@@ -94,7 +92,6 @@ function beep() {
         });
     }
     catch {
-        /* sound is optional */
     }
 }
 function start(root) {

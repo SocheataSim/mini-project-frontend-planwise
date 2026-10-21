@@ -60,6 +60,15 @@ function renderList(root) {
     if (!grid || !search)
         return;
     const update = () => {
+        if (courses.length === 0) {
+            grid.innerHTML = `
+        <div class="col-span-full rounded-3xl bg-elevated p-10 text-center">
+          <p class="font-display text-lg font-bold">No courses yet</p>
+          <p class="mt-2 text-base text-muted">Add your first course to start planning tasks and notes.</p>
+          <a href="course-new.html" class="${PRIMARY_BTN} mt-6">${PLUS} Add your first course</a>
+        </div>`;
+            return;
+        }
         const q = query.trim().toLowerCase();
         const shown = courses.filter((c) => !q || [c.name, c.code, c.instructor, c.subject].some((v) => v.toLowerCase().includes(q)));
         grid.innerHTML = shown.length

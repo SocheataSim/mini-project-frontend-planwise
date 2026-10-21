@@ -1,7 +1,7 @@
 interface NavItem {
   id: string;
-  label: string; // desktop sidebar
-  short: string; // mobile bottom bar
+  label: string; 
+  short: string; 
   href: string;
   icon: string;
 }

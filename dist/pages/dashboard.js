@@ -18,9 +18,7 @@ const CHEVRON_LEFT = `<svg viewBox="0 0 24 24" class="size-4" fill="none" stroke
 const BOOK = `<svg viewBox="0 0 24 24" class="size-6 text-navy" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v13"/><path d="M3 5.5a1 1 0 0 1 1-1h4a4 4 0 0 1 4 4V20a3 3 0 0 0-3-3H4a1 1 0 0 1-1-1z"/><path d="M21 5.5a1 1 0 0 0-1-1h-4a4 4 0 0 0-4 4V20a3 3 0 0 1 3-3h5a1 1 0 0 0 1-1z"/></svg>`;
 const PLAY = `<svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg>`;
 const CHECK_SM = `<svg viewBox="0 0 24 24" class="mx-auto size-3.5 text-on-brand" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>`;
-// The day picked in the calendar (starts on today; click it again to clear)
 let selectedDate = startOfDay(new Date());
-// The month shown in the calendar card
 let viewYear = new Date().getFullYear();
 let viewMonth = new Date().getMonth();
 function sortedOpenTasks(tasks) {
@@ -45,7 +43,7 @@ function bannerHtml() {
         <h2 id="journey-title" class="mt-3 font-display text-xl font-bold leading-snug text-ink sm:text-2xl">Great things start with a little focus.</h2>
         <p class="mt-3 text-base text-ink/80">${text}</p>
       </div>
-      <img src="../assets/logo-elements.png" alt="" width="280" height="180" class="hidden h-28 w-auto shrink-0 sm:block lg:h-32" />
+      <img src="../assets/logo-elements.png" alt="" width="240" height="160" class="hidden h-24 w-auto shrink-0 sm:block lg:h-28" />
     </section>`;
 }
 function taskRow(task, courses) {
@@ -72,7 +70,9 @@ function tasksHtml() {
     const open = sortedOpenTasks(data.tasks).slice(0, 3);
     const body = open.length
         ? `<ul class="mt-2">${open.map((t) => taskRow(t, courses)).join("")}</ul>`
-        : `<p class="mt-6 text-base text-muted">All clear. Add a task to plan your next step.</p>`;
+        : data.tasks.length === 0
+            ? `<p class="mt-6 text-base text-muted">No tasks yet. <a href="task.html?new=1" class="font-semibold text-brand hover:underline">Add your first task</a> to plan your next step.</p>`
+            : `<p class="mt-6 text-base text-muted">All clear. Add a task to plan your next step.</p>`;
     return `
     <section aria-labelledby="tasks-title" class="${CARD}">
       <div class="flex items-center justify-between">
@@ -106,7 +106,7 @@ function coursesHtml() {
         <h2 id="courses-title" class="font-display text-lg font-bold">Courses</h2>
         <a href="course.html" class="${LINK}">All courses ${CHEVRON}</a>
       </div>
-      <div class="@container mt-5"><div class="grid grid-cols-1 gap-4 @md:grid-cols-2 @3xl:grid-cols-2">${cards || `<p class="text-base text-muted">No courses yet.</p>`}</div></div>
+      <div class="@container mt-5"><div class="grid grid-cols-1 gap-4 @md:grid-cols-2 @3xl:grid-cols-2">${cards || `<p class="text-base text-muted">No courses yet. <a href="course-new.html" class="font-semibold text-brand hover:underline">Add your first course</a>.</p>`}</div></div>
     </section>`;
 }
 function dayListHtml() {
@@ -225,7 +225,6 @@ function studyHtml() {
       <a href="study.html" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-on-brand transition hover:brightness-95">${PLAY} Start a focus session</a>
     </section>`;
 }
-/* ---------- Behaviour ---------- */
 function render(root) {
     root.innerHTML = `
     ${bannerHtml()}

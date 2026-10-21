@@ -30,7 +30,6 @@ function matches(t, courseName) {
     const q = query.trim().toLowerCase();
     return !q || t.title.toLowerCase().includes(q) || courseName.toLowerCase().includes(q);
 }
-/** Open tasks by due date (overdue first), finished tasks last. */
 function sorted(tasks) {
     return [...tasks].sort((a, b) => Number(a.done) - Number(b.done) || new Date(a.due).getTime() - new Date(b.due).getTime());
 }
@@ -63,7 +62,9 @@ function box(checked, tone) {
 function rowHtml(t, courseName) {
     const picked = selected.has(t.id);
     const checked = selecting ? picked : t.done;
-    const label = selecting ? `Select “${escapeHtml(t.title)}”` : `Mark “${escapeHtml(t.title)}” as ${t.done ? "not done" : "done"}`;
+    const label = selecting
+        ? `Select “${escapeHtml(t.title)}”`
+        : `Mark “${escapeHtml(t.title)}” as ${t.done ? "not done" : "done"}`;
     const status = t.done
         ? `<span class="rounded-full bg-mint-soft px-3 py-1.5 text-sm font-semibold text-mint">Done</span>`
         : isOverdue(t)
@@ -96,8 +97,10 @@ function cardHtml() {
        </div>`
         : `<button type="button" data-action="select" class="${SECONDARY_BTN}">Select</button>`;
     const list = shown.length
-        ? `<ul class="mt-2">${shown.map((t) => rowHtml(t, names.get(t.courseId))).join("")}</ul>`
-        : `<p class="mt-6 rounded-2xl bg-surface p-8 text-center text-base text-muted">Nothing here yet. <button type="button" data-action="new" class="font-semibold text-brand hover:underline">Make a little plan</button> to get started.</p>`;
+        ? `<ul class="mt-2">${shown.map((t) => rowHtml(t, names.get(t.courseId) ?? "")).join("")}</ul>`
+        : data.tasks.length === 0
+            ? `<div class="mt-6 rounded-2xl bg-surface p-8 text-center"><p class="font-display text-md font-bold">No tasks yet</p><p class="mt-2 text-base text-muted">Create your first task and give your next step a home.</p><button type="button" data-action="new" class="${PRIMARY_BTN} mt-5">${PLUS} Add your first task</button></div>`
+            : `<p class="mt-6 rounded-2xl bg-surface p-8 text-center text-base text-muted">No tasks match this filter or search.</p>`;
     return `
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="font-display text-md font-bold">All your tasks</h2>
@@ -150,6 +153,36 @@ function setDone(ids, done) {
         }
     });
 }
+function confirmDialog({ title, message, confirmLabel = "Confirm" }) {
+    const dialog = document.getElementById("confirm-dialog");
+    const titleEl = document.getElementById("confirm-title");
+    const messageEl = document.getElementById("confirm-message");
+    const okBtn = document.getElementById("confirm-ok");
+    if (!(dialog instanceof HTMLDialogElement) || !titleEl || !messageEl || !okBtn) {
+        return Promise.resolve(window.confirm(message));
+    }
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    okBtn.textContent = confirmLabel;
+    return new Promise((resolve) => {
+        const onClick = (event) => {
+            const t = event.target;
+            if (t === dialog || (t instanceof Element && t.closest("[data-confirm-cancel]"))) {
+                dialog.close("cancel");
+            }
+            else if (t instanceof Element && t.closest("[data-confirm-ok]")) {
+                dialog.close("ok");
+            }
+        };
+        dialog.addEventListener("click", onClick);
+        dialog.addEventListener("close", () => {
+            dialog.removeEventListener("click", onClick);
+            resolve(dialog.returnValue === "ok");
+        }, { once: true });
+        dialog.returnValue = "";
+        dialog.showModal();
+    });
+}
 /* ---------- New task dialog ---------- */
 function openDialog() {
     const dialog = document.getElementById("task-dialog");
@@ -164,6 +197,20 @@ function openDialog() {
                 `<option value="">Other</option>`;
     }
     form.reset();
+    if (select instanceof HTMLSelectElement) {
+        const wrapper = select.parentElement?.parentElement;
+        let hint = document.getElementById("task-course-hint");
+        if (!hint && wrapper) {
+            hint = document.createElement("p");
+            hint.id = "task-course-hint";
+            hint.className = "mt-2 text-xs text-muted";
+            wrapper.appendChild(hint);
+        }
+        if (hint) {
+            hint.innerHTML = `No courses yet. <a href="course-new.html" class="font-semibold text-brand hover:underline">Add a course</a> to link tasks to it.`;
+            hint.classList.toggle("hidden", courses.length > 0);
+        }
+    }
     const date = form.elements.namedItem("date");
     const time = form.elements.namedItem("time");
     if (date instanceof HTMLInputElement)
@@ -179,9 +226,9 @@ function initDialog() {
     if (!(dialog instanceof HTMLDialogElement) || !(form instanceof HTMLFormElement))
         return;
     dialog.addEventListener("click", (event) => {
-        // A click on the dim backdrop targets the dialog itself
-        if (event.target === dialog || (event.target instanceof Element && event.target.closest("[data-close]")))
+        if (event.target === dialog || (event.target instanceof Element && event.target.closest("[data-close]"))) {
             dialog.close();
+        }
     });
     form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -197,13 +244,14 @@ function initDialog() {
         const due = new Date(`${text("date")}T${text("time") || "17:00"}`);
         if (Number.isNaN(due.getTime()))
             return;
-        const priority = text("priority");
+        const rawPriority = text("priority");
+        const priority = rawPriority === "medium" || rawPriority === "low" ? rawPriority : "high";
         const task = {
             id: `t-${uid()}`,
             title: text("title"),
             courseId: text("courseId"),
             due: due.toISOString(),
-            priority: priority === "medium" || priority === "low" ? priority : "high",
+            priority,
             done: false,
             completedAt: null,
             notes: text("notes"),
@@ -221,6 +269,7 @@ function initDialog() {
         refresh();
     });
 }
+/* ---------- Entry point ---------- */
 export function initTask() {
     const root = document.getElementById("task-content");
     if (!root)
@@ -235,7 +284,7 @@ export function initTask() {
             refresh();
         });
     }
-    root.addEventListener("click", (event) => {
+    root.addEventListener("click", async (event) => {
         const target = event.target;
         if (!(target instanceof Element))
             return;
@@ -263,8 +312,9 @@ export function initTask() {
             return;
         }
         const action = target.closest("[data-action]")?.dataset["action"];
-        if (action === "new")
+        if (action === "new") {
             openDialog();
+        }
         else if (action === "select") {
             selecting = !selecting;
             selected.clear();
@@ -278,7 +328,14 @@ export function initTask() {
         }
         else if (action === "bulk-delete") {
             const count = selected.size;
-            if (count === 0 || !window.confirm(`Delete ${count} selected ${count === 1 ? "task" : "tasks"}?`))
+            if (count === 0)
+                return;
+            const ok = await confirmDialog({
+                title: count === 1 ? "Delete this task?" : `Delete ${count} tasks?`,
+                message: "This can't be undone.",
+                confirmLabel: "Delete",
+            });
+            if (!ok)
                 return;
             updateData((data) => {
                 data.tasks = data.tasks.filter((t) => !selected.has(t.id));
@@ -288,7 +345,6 @@ export function initTask() {
             refresh();
         }
     });
-    // Links from other pages open the dialog straight away: task.html?new=1
     const params = new URLSearchParams(window.location.search);
     if (params.get("new") === "1") {
         openDialog();

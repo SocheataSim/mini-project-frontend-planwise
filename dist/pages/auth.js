@@ -29,7 +29,7 @@ function register(form) {
     const email = value(form, "email").toLowerCase();
     const university = value(form, "university");
     const field = value(form, "field");
-    // The password is never stored: this is a front-end demo, not real authentication.
+    
     updateData((data) => {
         data.user = { name, email, university, field };
     });

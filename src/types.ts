@@ -17,7 +17,7 @@ export interface Course {
   subject: string;
   color: CourseColor;
   description: string;
-  cover: boolean; // show the illustration on cards
+  cover: boolean; 
 }
 
 export interface Task {
@@ -37,7 +37,7 @@ export interface Note {
   courseId: string;
   title: string;
   description: string;
-  body: string; // limited HTML (see sanitizeHtml)
+  body: string; 
   pinned: boolean;
   createdAt: string;
   updatedAt: string;
@@ -56,7 +56,7 @@ export interface FocusSession {
   id: string;
   title: string;
   minutes: number;
-  endedAt: string; // ISO date-time
+  endedAt: string; 
 }
 
 export interface AppData {

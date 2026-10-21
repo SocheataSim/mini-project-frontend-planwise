@@ -1,6 +1,5 @@
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Fade sections in as they scroll into view. Nothing is hidden if JS fails or motion is reduced. */
 function revealOnScroll(): void {
   if (reduceMotion || !("IntersectionObserver" in window)) return;
 
@@ -41,7 +40,6 @@ function countUp(el: HTMLElement): void {
   requestAnimationFrame(step);
 }
 
-/** Count the stat numbers up once, when they become visible. */
 function animateStats(): void {
   if (reduceMotion || !("IntersectionObserver" in window)) return;
 

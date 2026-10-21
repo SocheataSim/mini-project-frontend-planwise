@@ -8,7 +8,6 @@ export function applyTheme(theme) {
         localStorage.setItem(STORAGE_KEY, theme);
     }
     catch {
-        /* storage can be blocked (private mode); the theme still applies for this visit */
     }
     syncToggles();
 }

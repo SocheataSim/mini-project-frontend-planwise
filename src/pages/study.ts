@@ -17,7 +17,6 @@ const SECONDARY_BTN =
   "inline-flex items-center justify-center rounded-xl border border-line bg-elevated px-5 py-3 text-sm font-semibold transition-colors hover:bg-surface disabled:pointer-events-none disabled:opacity-40";
 const CARD = "rounded-3xl bg-elevated p-5 sm:p-6";
 
-/** Slightly larger version of a button class, used only on the timer card. */
 const BIG = (classes: string): string => classes.replace("px-5 py-3 text-sm", "px-6 py-3 text-sm");
 const LINK = "text-sm font-semibold text-brand hover:underline";
 
@@ -29,7 +28,6 @@ const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 type Mode = "focus" | "break";
 type Status = "idle" | "running" | "paused";
 
-/* ---------- Timer state (lives in memory while the page is open) ---------- */
 
 let mode: Mode = "focus";
 let status: Status = "idle";
@@ -114,7 +112,6 @@ function beep(): void {
       osc.stop(ctx.currentTime + i * 0.25 + 0.2);
     });
   } catch {
-    /* sound is optional */
   }
 }
 

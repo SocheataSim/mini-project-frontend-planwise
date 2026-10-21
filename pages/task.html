@@ -11,7 +11,6 @@
     <meta property="og:description" content="Plan, prioritise and finish your study tasks with Planwise." />
     <meta property="og:type" content="website" />
 
-    <!-- Apply saved theme before first paint to avoid a light flash -->
     <script>
       (function () {
         try {
@@ -41,7 +40,6 @@
       >Skip to content</a
     >
 
-    <!-- Desktop sidebar (lg) / tablet icon rail (md) -->
     <aside class="fixed inset-y-0 left-0 z-30 hidden w-[4.5rem] flex-col bg-page px-3 py-6 md:flex lg:w-56 lg:px-5">
       <a href="../index.html" class="flex items-center justify-center gap-2.5 lg:justify-start lg:px-2" aria-label="Planwise home">
         <img src="../assets/planwise-logo.png" alt="" width="48" height="48" class="size-10 shrink-0 lg:size-11" />
@@ -97,6 +95,7 @@
         <main id="main" class="mt-6">
           <div id="task-content"></div>
 
+          <!-- New task dialog -->
           <dialog id="task-dialog" aria-labelledby="task-dialog-title" class="m-auto max-h-[calc(100dvh-2rem)] w-[min(34rem,calc(100vw-2rem))] overflow-y-auto rounded-3xl bg-elevated p-0 text-ink shadow-[var(--shadow-md)] backdrop:bg-black/50 backdrop:backdrop-blur-sm">
             <form id="task-form" novalidate class="p-6 sm:p-8">
               <div class="flex items-start justify-between gap-4">
@@ -156,11 +155,24 @@
               </div>
             </form>
           </dialog>
+
+          <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message" class="m-auto w-[min(26rem,calc(100vw-2rem))] rounded-3xl bg-elevated p-0 text-ink shadow-[var(--shadow-md)] backdrop:bg-black/50 backdrop:backdrop-blur-sm">
+            <div class="p-6 sm:p-8">
+              <div class="grid size-12 place-items-center rounded-full bg-brand-soft text-brand">
+                <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>
+              </div>
+              <h2 id="confirm-title" class="mt-4 font-display text-lg font-extrabold tracking-tight"></h2>
+              <p id="confirm-message" class="mt-2 text-sm text-muted"></p>
+              <div class="mt-8 flex justify-end gap-3">
+                <button type="button" data-confirm-cancel autofocus class="rounded-xl border border-line bg-elevated px-5 py-3 text-sm font-semibold transition-colors hover:bg-surface">Cancel</button>
+                <button type="button" data-confirm-ok id="confirm-ok" class="rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-on-brand transition hover:brightness-95">Delete</button>
+              </div>
+            </div>
+          </dialog>
         </main>
       </div>
     </div>
 
-    <!-- Mobile bottom navigation (below md) -->
     <nav id="bottom-nav" aria-label="Main" class="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-line bg-elevated pb-[env(safe-area-inset-bottom)] md:hidden"></nav>
   </body>
 </html>

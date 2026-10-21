@@ -17,11 +17,10 @@ function boot(): void {
 
   if (page !== "landing") document.getElementById("main")?.classList.add("page-in");
 
-  // Sub-pages (like "create course") can highlight their parent item with data-nav
   renderNav(document.body.dataset.nav ?? page);
   initThemeToggle();
 
-  // Header date, e.g. "Wed, 14 Oct 2026"
+  // Header date, "Wed, 14 Oct 2026"
   const todayEl = document.getElementById("today");
   if (todayEl) {
     const now = new Date();
@@ -29,7 +28,6 @@ function boot(): void {
     todayEl.setAttribute("datetime", now.toISOString().slice(0, 10));
   }
 
-  // Name and initials (set after register; "Genius" / "AK" until then)
   const { user } = getData();
   if (user) {
     const words = user.name.trim().split(/\s+/);
@@ -39,7 +37,7 @@ function boot(): void {
     if (initialsEl) initialsEl.textContent = words.map((w) => w[0] ?? "").join("").slice(0, 2).toUpperCase();
   }
 
-  initHeader(); // search, notifications and the profile menu (only on pages that have them)
+  initHeader(); 
 
   // Load only the code the current page needs
   if (page === "dashboard") void import("./pages/dashboard.js").then((m) => m.initDashboard());

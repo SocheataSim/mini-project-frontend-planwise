@@ -33,7 +33,7 @@ function cardHtml(c: Course): string {
     <a href="course.html?id=${encodeURIComponent(c.id)}" class="block overflow-hidden rounded-3xl bg-elevated transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]">
       <div class="flex h-28 items-center justify-between px-5 ${BAND[c.color]}">
         <span class="text-sm font-bold ${CODE[c.color]}">${escapeHtml(c.code)}</span>
-        ${c.cover ? `<img src="../assets/hero-illustration.svg" alt="" width="240" height="160" class="h-20 w-auto" />` : ""}
+        ${c.cover ? `<img src="../assets/logo-elements.png" alt="" width="240" height="160" class="h-20 w-auto" />` : ""}
       </div>
       <div class="p-5">
         <h3 class="font-display text-md font-bold">${escapeHtml(c.name)}</h3>
@@ -74,6 +74,15 @@ function renderList(root: HTMLElement): void {
   if (!grid || !search) return;
 
   const update = (): void => {
+    if (courses.length === 0) {
+      grid.innerHTML = `
+        <div class="col-span-full rounded-3xl bg-elevated p-10 text-center">
+          <p class="font-display text-lg font-bold">No courses yet</p>
+          <p class="mt-2 text-base text-muted">Add your first course to start planning tasks and notes.</p>
+          <a href="course-new.html" class="${PRIMARY_BTN} mt-6">${PLUS} Add your first course</a>
+        </div>`;
+      return;
+    }
     const q = query.trim().toLowerCase();
     const shown = courses.filter(
       (c) => !q || [c.name, c.code, c.instructor, c.subject].some((v) => v.toLowerCase().includes(q))
@@ -163,7 +172,7 @@ function renderDetail(root: HTMLElement, id: string): void {
         <p class="mt-2 text-base text-ink/80">Taught by ${escapeHtml(c.instructor)}</p>
         <p class="mt-4 text-sm text-ink/80">${progressText}</p>
       </div>
-      ${c.cover ? `<img src="../assets/hero-illustration.svg" alt="" width="240" height="160" class="hidden h-24 w-auto shrink-0 sm:block lg:h-28" />` : ""}
+      ${c.cover ? `<img src="../assets/logo-elements.png" alt="" width="240" height="160" class="hidden h-24 w-auto shrink-0 sm:block lg:h-28" />` : ""}
     </section>
 
     <div role="tablist" aria-label="Course sections" class="mt-6 flex gap-6 border-b border-line">
